@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Blog — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <span class="section-eyebrow">Writing</span>
+    <h1>Blog</h1>
+    <p>Notes on data engineering, AWS, and things I build and break.</p>
+  </div>
+
+  {% if tags %}
+  <div class="filter-bar">
+    <a class="filter-chip{% if not active_tag %} is-active{% endif %}" href="{% url 'blog:list' %}">All</a>
+    {% for tag in tags %}
+      <a class="filter-chip{% if active_tag == tag %} is-active{% endif %}" href="?tag={{ tag.slug }}">{{ tag.name }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if posts %}
+    <div>
+      {% for post in posts %}
+        <a class="list-row" href="{{ post.get_absolute_url }}">
+          <span>
+            <span class="list-row-title">{{ post.title }}</span>
+            {% if post.excerpt %}<p style="margin:.3rem 0 0;">{{ post.excerpt }}</p>{% endif %}
+          </span>
+          <span class="list-row-date">{{ post.published_at|date:"M d, Y" }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">No posts published yet — add one from the Django admin.</div>
+  {% endif %}
+</div>
+{% endblock %}

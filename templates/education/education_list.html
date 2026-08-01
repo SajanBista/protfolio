@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Education — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <span class="section-eyebrow">Academic Background</span>
+    <h1>Education</h1>
+  </div>
+
+  {% if education_items %}
+    <div class="timeline" style="max-width:720px;">
+      {% for edu in education_items %}
+        <div class="timeline-item">
+          <h3>{{ edu.degree }}{% if edu.field_of_study %}, {{ edu.field_of_study }}{% endif %}</h3>
+          <div class="timeline-org">{{ edu.institution }}{% if edu.location %} — {{ edu.location }}{% endif %}</div>
+          <div class="timeline-dates">
+            {{ edu.start_date|date:"M Y" }} — {% if edu.is_ongoing %}Present{% elif edu.end_date %}{{ edu.end_date|date:"M Y" }}{% else %}Present{% endif %}
+          </div>
+          {% if edu.description %}<p>{{ edu.description }}</p>{% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">No education entries yet — add one from the Django admin.</div>
+  {% endif %}
+</div>
+{% endblock %}

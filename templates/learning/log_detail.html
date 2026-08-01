@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ entry.ticket_number }} — {{ entry.title }} — {{ SITE_NAME }}{% endblock %}
+{% block description %}{{ entry.summary }}{% endblock %}
+{% block content %}
+<article class="container">
+  <div class="page-header">
+    <a class="view-all" href="{% url 'learning:list' %}">← Learning Log</a>
+    <div style="margin-top:1rem;">
+      <span class="badge badge-accent">{{ entry.ticket_number }}</span>
+      <span class="status-{{ entry.status }}" style="margin-left:.6rem;font-weight:600;">{{ entry.get_status_display }}</span>
+    </div>
+    <h1 style="margin-top:.6rem;">{{ entry.title }}</h1>
+    <div class="card-meta">
+      <span>{{ entry.date|date:"F d, Y" }}</span>
+      {% if entry.topic %}<span class="badge">{{ entry.topic }}</span>{% endif %}
+    </div>
+  </div>
+
+  <dl class="ticket-panel">
+    <div class="ticket-row"><dt>Ticket</dt><dd>{{ entry.ticket_number }}</dd></div>
+    <div class="ticket-row"><dt>Suggested branch</dt><dd>{{ entry.branch_name }}</dd></div>
+    <div class="ticket-row">
+      <dt>GitHub issue</dt>
+      <dd>
+        {% if entry.github_issue_url %}
+          <a href="{{ entry.github_issue_url }}" target="_blank" rel="noopener">#{{ entry.github_issue_number }} ↗</a>
+        {% else %}
+          not linked yet
+        {% endif %}
+      </dd>
+    </div>
+  </dl>
+
+  {% if entry.notes %}
+    <div class="prose">{{ entry.notes_html|safe }}</div>
+  {% endif %}
+</article>
+{% endblock %}

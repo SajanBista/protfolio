@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Learning Log — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <span class="section-eyebrow">Building in Public</span>
+    <h1>Learning Log</h1>
+    <p>Daily learning activity, tracked as tickets (e.g. LEARN-0001) and linked to GitHub issues/branches.</p>
+  </div>
+
+  {% if status_choices %}
+  <div class="filter-bar">
+    <a class="filter-chip{% if not active_status %} is-active{% endif %}" href="{% url 'learning:list' %}">All</a>
+    {% for value, label in status_choices %}
+      <a class="filter-chip{% if active_status == value %} is-active{% endif %}" href="?status={{ value }}">{{ label }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if logs %}
+    <div>
+      {% for entry in logs %}
+        <a class="list-row" href="{{ entry.get_absolute_url }}">
+          <span>
+            <span class="badge" style="margin-right:.6rem;">{{ entry.ticket_number }}</span>
+            <span class="list-row-title">{{ entry.title }}</span>
+            <span class="status-{{ entry.status }}" style="margin-left:.6rem;font-size:.8rem;font-weight:600;">{{ entry.get_status_display }}</span>
+          </span>
+          <span class="list-row-date">{{ entry.date|date:"M d, Y" }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">No learning log entries yet — add today's activity from the Django admin.</div>
+  {% endif %}
+</div>
+{% endblock %}

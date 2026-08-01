@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Projects — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <span class="section-eyebrow">Selected Work</span>
+    <h1>Projects</h1>
+    <p>APIs, scrapers, data pipelines, and AWS-backed systems I've built.</p>
+  </div>
+
+  {% if projects %}
+    <div class="grid grid-3">
+      {% for project in projects %}
+        <a class="card" href="{{ project.get_absolute_url }}">
+          {% if project.cover_image %}<img class="card-cover" src="{{ project.cover_image.url }}" alt="{{ project.title }}">{% endif %}
+          <div class="card-body">
+            <h3>{{ project.title }}</h3>
+            <p>{{ project.summary }}</p>
+            <div class="card-tech">
+              {% for tech in project.tech_list %}<span class="tech-chip">{{ tech }}</span>{% endfor %}
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">No projects yet — add one from the Django admin.</div>
+  {% endif %}
+</div>
+{% endblock %}

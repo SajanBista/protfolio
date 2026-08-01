@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ project.title }} — {{ SITE_NAME }}{% endblock %}
+{% block description %}{{ project.summary }}{% endblock %}
+{% block content %}
+<article class="container">
+  <div class="page-header">
+    <a class="view-all" href="{% url 'projects:list' %}">← All projects</a>
+    <h1 style="margin-top:1rem;">{{ project.title }}</h1>
+    <p>{{ project.summary }}</p>
+    <div class="card-tech">
+      {% for tech in project.tech_list %}<span class="tech-chip">{{ tech }}</span>{% endfor %}
+    </div>
+    <div class="hero-actions" style="margin-top:1.25rem;">
+      {% if project.github_url %}<a class="btn btn-outline" href="{{ project.github_url }}" target="_blank" rel="noopener">View on GitHub</a>{% endif %}
+      {% if project.live_url %}<a class="btn btn-primary" href="{{ project.live_url }}" target="_blank" rel="noopener">Live Demo</a>{% endif %}
+    </div>
+  </div>
+
+  {% if project.cover_image %}
+    <img src="{{ project.cover_image.url }}" alt="{{ project.title }}" style="width:100%;border-radius:var(--radius-md);margin:1.5rem 0;">
+  {% endif %}
+
+  {% if project.description %}
+    <div class="prose">{{ project.description_html|safe }}</div>
+  {% endif %}
+</article>
+{% endblock %}

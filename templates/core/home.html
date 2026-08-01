@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="hero">
+  <div class="container hero-grid">
+    {% if profile.avatar %}
+      <img class="hero-avatar" src="{{ profile.avatar.url }}" alt="{{ profile.full_name }}">
+    {% else %}
+      <div class="hero-avatar-fallback">{{ profile.full_name|first }}</div>
+    {% endif %}
+    <div>
+      <h1>{{ profile.full_name }}</h1>
+      <p class="headline">{{ profile.headline }}</p>
+      {% if profile.bio %}<p class="bio">{{ profile.bio }}</p>{% endif %}
+      <div class="hero-meta">
+        {% if profile.location %}<span>📍 {{ profile.location }}</span>{% endif %}
+        {% if profile.email %}<span>✉️ {{ profile.email }}</span>{% endif %}
+      </div>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="{% url 'projects:list' %}">View Projects</a>
+        {% if profile.resume %}
+          <a class="btn btn-outline" href="{{ profile.resume.url }}" target="_blank" rel="noopener">Download Resume</a>
+        {% endif %}
+        <a class="btn btn-outline" href="{% url 'learning:list' %}">Learning Log</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if skill_categories %}
+<section class="section">
+  <div class="container">
+    <span class="section-eyebrow">Toolbox</span>
+    <div class="section-head"><h2>Skills</h2></div>
+    <div class="skills-grid">
+      {% for category in skill_categories %}
+        <div class="skill-category">
+          <h3>{{ category.name }}</h3>
+          <div class="skill-list">
+            {% for skill in category.skills.all %}
+              <span class="badge">{{ skill.name }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="container">
+    <span class="section-eyebrow">Selected Work</span>
+    <div class="section-head">
+      <h2>Featured Projects</h2>
+      <a class="view-all" href="{% url 'projects:list' %}">All projects →</a>
+    </div>
+    {% if featured_projects %}
+      <div class="grid grid-2">
+        {% for project in featured_projects %}
+          <a class="card" href="{{ project.get_absolute_url }}">
+            {% if project.cover_image %}<img class="card-cover" src="{{ project.cover_image.url }}" alt="{{ project.title }}">{% endif %}
+            <div class="card-body">
+              <h3>{{ project.title }}</h3>
+              <p>{{ project.summary }}</p>
+              <div class="card-tech">
+                {% for tech in project.tech_list %}<span class="tech-chip">{{ tech }}</span>{% endfor %}
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">Mark projects as "featured" in the admin to show them here.</div>
+    {% endif %}
+  </div>
+</section>
+
+{% if experiences %}
+<section class="section">
+  <div class="container">
+    <span class="section-eyebrow">Career</span>
+    <div class="section-head">
+      <h2>Experience</h2>
+      <a class="view-all" href="{% url 'experience:list' %}">Full history →</a>
+    </div>
+    <div class="timeline">
+      {% for exp in experiences %}
+        <div class="timeline-item">
+          <h3>{{ exp.role }}</h3>
+          <div class="timeline-org">{{ exp.company }}</div>
+          <div class="timeline-dates">
+            {{ exp.start_date|date:"M Y" }} — {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if latest_posts %}
+<section class="section">
+  <div class="container">
+    <span class="section-eyebrow">Writing</span>
+    <div class="section-head">
+      <h2>Latest from the Blog</h2>
+      <a class="view-all" href="{% url 'blog:list' %}">All posts →</a>
+    </div>
+    <div>
+      {% for post in latest_posts %}
+        <a class="list-row" href="{{ post.get_absolute_url }}">
+          <span class="list-row-title">{{ post.title }}</span>
+          <span class="list-row-date">{{ post.published_at|date:"M d, Y" }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
