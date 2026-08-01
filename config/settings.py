@@ -22,6 +22,10 @@ DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv())
 
+# Trusted origins for CSRF (needed once the site is served over HTTPS on a
+# real domain, e.g. https://yourapp.onrender.com). Comma-separated.
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=Csv())
+
 
 # Application definition
 
@@ -33,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
+    "storages",
     # Local apps
     "apps.core",
     "apps.blog",
@@ -82,8 +87,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 # DATABASE_URL=postgresql://postgres:[PASSWORD]@[HOST]:5432/postgres
 
 DATABASES = {
-    "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+    "default": dj_database_url.parse(
+        config("DATABASE_URL", default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
         conn_max_age=600,
     )
 }
@@ -115,18 +120,52 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Media files (user/admin-uploaded images: avatar, blog covers, project
+# screenshots, resume, etc.)
+#
+# Locally this stays on disk. In production (most free hosts have an
+# ephemeral filesystem), point it at a Supabase Storage bucket instead by
+# setting SUPABASE_PROJECT_REF + SUPABASE_S3_* in .env — see .env.example.
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+SUPABASE_PROJECT_REF = config("SUPABASE_PROJECT_REF", default="")
+SUPABASE_S3_ACCESS_KEY_ID = config("SUPABASE_S3_ACCESS_KEY_ID", default="")
+SUPABASE_S3_SECRET_ACCESS_KEY = config("SUPABASE_S3_SECRET_ACCESS_KEY", default="")
+SUPABASE_S3_BUCKET = config("SUPABASE_S3_BUCKET", default="media")
+SUPABASE_S3_REGION = config("SUPABASE_S3_REGION", default="us-east-1")
+
+USE_SUPABASE_STORAGE = bool(
+    SUPABASE_PROJECT_REF and SUPABASE_S3_ACCESS_KEY_ID and SUPABASE_S3_SECRET_ACCESS_KEY
+)
+
+if USE_SUPABASE_STORAGE:
+    AWS_ACCESS_KEY_ID = SUPABASE_S3_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY = SUPABASE_S3_SECRET_ACCESS_KEY
+    AWS_STORAGE_BUCKET_NAME = SUPABASE_S3_BUCKET
+    AWS_S3_REGION_NAME = SUPABASE_S3_REGION
+    AWS_S3_ENDPOINT_URL = f"https://{SUPABASE_PROJECT_REF}.supabase.co/storage/v1/s3"
+    # Supabase serves public files from a different path than the S3 API
+    # endpoint above, so URLs are built against this custom domain instead.
+    AWS_S3_CUSTOM_DOMAIN = f"{SUPABASE_PROJECT_REF}.supabase.co/storage/v1/object/public"
+    AWS_S3_ADDRESSING_STYLE = "path"
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_DEFAULT_ACL = None
+    AWS_QUERYSTRING_AUTH = False
+
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": (
+            "storages.backends.s3.S3Storage"
+            if USE_SUPABASE_STORAGE
+            else "django.core.files.storage.FileSystemStorage"
+        ),
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
-
-# Media files (user/admin-uploaded images: blog covers, project screenshots, etc.)
-MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -146,3 +185,16 @@ LINKEDIN_URL = config("LINKEDIN_URL", default="")
 # permission on the target repo and set these in your .env file.
 GITHUB_TOKEN = config("GITHUB_TOKEN", default="")
 GITHUB_REPO = config("GITHUB_REPO", default="")  # format: "username/repo"
+
+
+# --- Production hardening ---------------------------------------------------
+# Hosts like Render/Railway/PythonAnywhere terminate TLS at a proxy in front
+# of the app, so Django needs to trust the X-Forwarded-Proto header to know
+# a request was actually HTTPS (otherwise SECURE_SSL_REDIRECT loops forever).
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=True, cast=bool)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = config("SECURE_HSTS_SECONDS", default=604800, cast=int)  # 7 days
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
