@@ -1,5 +1,7 @@
 from datetime import date
+from pathlib import Path
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from apps.blog.models import BlogPost, Tag
@@ -25,6 +27,8 @@ class Command(BaseCommand):
         profile.location = "Nepal"
         profile.email = "sharing.parsedom@gmail.com"
         profile.github_url = "https://github.com/"
+        if not profile.avatar and (Path(settings.MEDIA_ROOT) / "profile" / "profile.jpg").exists():
+            profile.avatar.name = "profile/profile.jpg"
         profile.save()
         self.stdout.write(self.style.SUCCESS("Profile seeded."))
 
