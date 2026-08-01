@@ -25,7 +25,7 @@ class Command(BaseCommand):
             "foundations toward a master's degree while building this portfolio in public."
         )
         profile.location = "Nepal"
-        profile.email = "sharing.parsedom@gmail.com"
+        profile.email = "sajanbista1030@gmail.com"
         profile.github_url = "https://github.com/"
         if not profile.avatar and (Path(settings.MEDIA_ROOT) / "profile" / "profile.jpg").exists():
             profile.avatar.name = "profile/profile.jpg"
