@@ -148,7 +148,10 @@ if USE_SUPABASE_STORAGE:
     AWS_S3_ENDPOINT_URL = f"https://{SUPABASE_PROJECT_REF}.supabase.co/storage/v1/s3"
     # Supabase serves public files from a different path than the S3 API
     # endpoint above, so URLs are built against this custom domain instead.
-    AWS_S3_CUSTOM_DOMAIN = f"{SUPABASE_PROJECT_REF}.supabase.co/storage/v1/object/public"
+    # django-storages doesn't insert the bucket name when a custom domain is
+    # set (it assumes the domain is already bucket-specific), so it's baked
+    # into the domain here to match Supabase's path-style public URLs.
+    AWS_S3_CUSTOM_DOMAIN = f"{SUPABASE_PROJECT_REF}.supabase.co/storage/v1/object/public/{SUPABASE_S3_BUCKET}"
     AWS_S3_ADDRESSING_STYLE = "path"
     AWS_S3_FILE_OVERWRITE = False
     AWS_DEFAULT_ACL = None
