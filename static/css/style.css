@@ -8,7 +8,7 @@
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 18px;
-  --max-width: 1200px;
+  --max-width: 1320px;
 
   --accent: #6366f1;
   --accent-rgb: 99, 102, 241;
@@ -109,17 +109,17 @@ pre code { background: none; padding: 0; }
   animation: bg-drift 26s ease-in-out infinite;
 }
 .bg-blob-1 {
-  width: 46vw; height: 46vw; top: -14%; left: -12%;
-  background: radial-gradient(circle, rgba(var(--accent-rgb), .30), transparent 70%);
+  width: 50vw; height: 50vw; top: -14%; left: -14%;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), .38), transparent 70%);
 }
 .bg-blob-2 {
-  width: 40vw; height: 40vw; bottom: -16%; right: -10%;
-  background: radial-gradient(circle, rgba(var(--accent-2-rgb), .24), transparent 70%);
+  width: 44vw; height: 44vw; bottom: -18%; right: -12%;
+  background: radial-gradient(circle, rgba(var(--accent-2-rgb), .32), transparent 70%);
   animation-delay: -9s;
 }
 .bg-blob-3 {
-  width: 34vw; height: 34vw; top: 42%; left: 58%;
-  background: radial-gradient(circle, rgba(var(--accent-rgb), .18), transparent 70%);
+  width: 38vw; height: 38vw; top: 40%; left: 58%;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), .24), transparent 70%);
   animation-delay: -17s;
 }
 @keyframes bg-drift {
