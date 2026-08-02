@@ -52,8 +52,8 @@
         <span class="stat-label">Projects Shipped</span>
       </div>
       <div class="stat-item">
-        <span class="stat-value">{{ stats.years_experience }}+</span>
-        <span class="stat-label">Years Experience</span>
+        <span class="stat-value">{{ stats.experience_value }}+</span>
+        <span class="stat-label">{{ stats.experience_unit }}</span>
       </div>
       <div class="stat-item">
         <span class="stat-value">{{ stats.posts }}</span>
@@ -129,8 +129,17 @@
       <div class="timeline">
         {% for exp in experiences %}
           <div class="timeline-item">
-            <h3>{{ exp.role }}</h3>
-            <div class="timeline-org">{{ exp.company }}</div>
+            <div class="timeline-head">
+              {% if exp.logo %}
+                <img class="timeline-logo" src="{{ exp.logo.url }}" alt="{{ exp.company }}">
+              {% else %}
+                <div class="timeline-logo-fallback">{{ exp.company|first }}</div>
+              {% endif %}
+              <div>
+                <h3>{{ exp.role }}</h3>
+                <div class="timeline-org">{{ exp.company }}</div>
+              </div>
+            </div>
             <div class="timeline-dates">
               {{ exp.start_date|date:"M Y" }} — {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}
             </div>

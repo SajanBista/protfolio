@@ -13,7 +13,14 @@ from .models import Profile, SkillCategory
 def home(request):
     experiences = Experience.objects.all()
     earliest_start = experiences.order_by("start_date").values_list("start_date", flat=True).first()
-    years_experience = (date.today() - earliest_start).days // 365 if earliest_start else 0
+
+    experience_value, experience_unit = 0, "Years Experience"
+    if earliest_start:
+        days = (date.today() - earliest_start).days
+        if days >= 365:
+            experience_value, experience_unit = days // 365, "Years Experience"
+        else:
+            experience_value, experience_unit = max(days // 30, 1), "Months Experience"
 
     context = {
         "profile": Profile.get_solo(),
@@ -25,7 +32,8 @@ def home(request):
         "stats": {
             "projects": Project.objects.count(),
             "posts": BlogPost.objects.filter(status=BlogPost.Status.PUBLISHED).count(),
-            "years_experience": years_experience,
+            "experience_value": experience_value,
+            "experience_unit": experience_unit,
         },
     }
     return render(request, "core/home.html", context)

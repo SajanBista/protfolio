@@ -11,8 +11,17 @@
     <div class="timeline" style="max-width:720px;">
       {% for edu in education_items %}
         <div class="timeline-item">
-          <h3>{{ edu.degree }}{% if edu.field_of_study %}, {{ edu.field_of_study }}{% endif %}</h3>
-          <div class="timeline-org">{{ edu.institution }}{% if edu.location %} — {{ edu.location }}{% endif %}</div>
+          <div class="timeline-head">
+            {% if edu.logo %}
+              <img class="timeline-logo" src="{{ edu.logo.url }}" alt="{{ edu.institution }}">
+            {% else %}
+              <div class="timeline-logo-fallback">{{ edu.institution|first }}</div>
+            {% endif %}
+            <div>
+              <h3>{{ edu.degree }}{% if edu.field_of_study %}, {{ edu.field_of_study }}{% endif %}</h3>
+              <div class="timeline-org">{{ edu.institution }}{% if edu.location %} — {{ edu.location }}{% endif %}</div>
+            </div>
+          </div>
           <div class="timeline-dates">
             {{ edu.start_date|date:"M Y" }} — {% if edu.is_ongoing %}Present{% elif edu.end_date %}{{ edu.end_date|date:"M Y" }}{% else %}Present{% endif %}
           </div>

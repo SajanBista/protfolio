@@ -122,8 +122,8 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("Education seeded."))
 
         Experience.objects.get_or_create(
-            company="Update in admin",
-            role="Data Engineer",
+            company="Parsedom",
+            role="Junior Data Engineer",
             defaults={
                 "location": "Remote",
                 "employment_type": "Full-time",

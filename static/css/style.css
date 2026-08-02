@@ -8,7 +8,7 @@
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 18px;
-  --max-width: 1080px;
+  --max-width: 1200px;
 
   --accent: #6366f1;
   --accent-rgb: 99, 102, 241;
@@ -407,9 +407,20 @@ a.card:hover .card-body h3 { color: var(--accent); }
   width: 14px; height: 14px; border-radius: 50%;
   background: var(--bg); border: 2px solid var(--accent);
 }
+.timeline-head { display: flex; align-items: center; gap: .9rem; margin-bottom: .3rem; }
+.timeline-logo {
+  width: 44px; height: 44px; border-radius: 10px; object-fit: cover; flex-shrink: 0;
+  border: 1px solid var(--border); background: var(--bg-elevated);
+}
+.timeline-logo-fallback {
+  width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; font-weight: 800; font-size: 1.1rem;
+}
 .timeline-item h3 { font-size: 1.22rem; margin-bottom: .15rem; }
-.timeline-org { color: var(--accent); font-weight: 600; font-size: 1rem; margin-bottom: .3rem; }
-.timeline-dates { color: var(--text-faint); font-size: .88rem; font-family: var(--font-mono); margin-bottom: .7rem; }
+.timeline-org { color: var(--accent); font-weight: 600; font-size: 1rem; }
+.timeline-dates { color: var(--text-faint); font-size: .88rem; font-family: var(--font-mono); margin: .3rem 0 .7rem; }
 
 /* ---------------------------------------------------------------------
    Filters (blog tags / learning topics)

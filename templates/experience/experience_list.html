@@ -11,11 +11,20 @@
     <div class="timeline" style="max-width:720px;">
       {% for exp in experiences %}
         <div class="timeline-item">
-          <h3>{{ exp.role }}</h3>
-          <div class="timeline-org">
-            {% if exp.company_url %}<a href="{{ exp.company_url }}" target="_blank" rel="noopener">{{ exp.company }}</a>{% else %}{{ exp.company }}{% endif %}
-            {% if exp.location %} — {{ exp.location }}{% endif %}
-            {% if exp.employment_type %} · {{ exp.employment_type }}{% endif %}
+          <div class="timeline-head">
+            {% if exp.logo %}
+              <img class="timeline-logo" src="{{ exp.logo.url }}" alt="{{ exp.company }}">
+            {% else %}
+              <div class="timeline-logo-fallback">{{ exp.company|first }}</div>
+            {% endif %}
+            <div>
+              <h3>{{ exp.role }}</h3>
+              <div class="timeline-org">
+                {% if exp.company_url %}<a href="{{ exp.company_url }}" target="_blank" rel="noopener">{{ exp.company }}</a>{% else %}{{ exp.company }}{% endif %}
+                {% if exp.location %} — {{ exp.location }}{% endif %}
+                {% if exp.employment_type %} · {{ exp.employment_type }}{% endif %}
+              </div>
+            </div>
           </div>
           <div class="timeline-dates">
             {{ exp.start_date|date:"M Y" }} — {% if exp.is_current %}Present{% elif exp.end_date %}{{ exp.end_date|date:"M Y" }}{% else %}Present{% endif %}
